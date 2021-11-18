@@ -9,7 +9,7 @@ const {
   emailExist,
   findUserbyEmail,
   urlsForUser
-} = require('./helpers');
+} = require('./helper');
 const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080;
@@ -53,7 +53,7 @@ const users = {
   }
 };
 
-/*redirect root to /urls or /login*/
+//redirect url to login
 app.get('/', (req, res) => {
   let user = req.session.user_id;
   //redirect to login page if user is not logged in
@@ -68,10 +68,11 @@ app.get('/urls', (req, res) => {
   //retrieve user's url only (make sure they exist first)
   let urls = { };
   if (userExist(user, users)) {
+    console.log(user);
     urls = urlsForUser(user, urlDatabase);
     email = users[user].email;
   } else {
-    user = undefined;
+    user = undefined; 
   }
   let urlData = {urls: urls, email, user_id: user};
   res.render('urls_index', urlData);
@@ -197,7 +198,7 @@ app.get('/login', (req, res) => {
 });
 
 /*request to login user*/
-app.put('/login', (req, res) => {
+app.post('/login', (req, res) => {
   //error checking - email and password must match to login
   const email = (req.body.email).trim();
   const password = (req.body.password).trim();
